@@ -40,32 +40,13 @@ def combo_check(combo_text):  # check the user's selection of the combobox besid
         messagebox.showerror("Really -_-", "You have to select a sorting technique")
 
 
-def path_info(master):  # provide info about the meaning of the phrase "path" in case the user didn't know
-    master.iconify()  # creating the window
-    info = Toplevel(bg=Blue)
-    info.title("What is the path ?")
-    info.geometry("620x500+360+80")
-    info.resizable(0, 0)
-    Label(info, bg=lightBlue, font=text_font, text="The path is the sequence of folders that reaches a specific place "
-                                                   "in the device").place(x=20, y=20)
-    try:  # using "try" statement so if the logo files are not exist, the code doesn't crash
-        Label(info, image=path1).place(x=20, y=50)
-    except:
-        Label(info, text="Picture is lost", font=text_font).place(x=100, y=100)
-    Label(info, bg=lightBlue, font=text_font, text="Click this path and copy it ").place(x=20, y=240)
-    try:
-        Label(info, image=path2).place(x=20, y=270)
-    except:
-        Label(info, text="Picture is lost", font=text_font).place(x=100, y=320)
-    Label(info, bg=lightBlue, font=text_font, text="Now just paste it in the field ").place(x=20, y=460)
-
-
 # response to the click on the "Sort" button by applying the selected orders
 def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
     try:
         if not obj_listbox.get(0, END) and not paths_listbox.get(0, END) and not new_path_entry.get():
             messagebox.showerror("Where are they ??", "At least one of the two boxes, and the new-path field mustn't be "
                                                       "empty.")
+            new_path_entry.delete(0, END)
             return 0
 
         error_message = "You have to fill the path field with a valid path and select the type of " \
@@ -78,6 +59,7 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
 
         if not os.path.isdir(new_path):  # assure that the given path is valid
             messagebox.showerror("What was that ??", "Invalid path in the new-path field")
+            new_path_entry.delete(0, END)
             return 0
 
         for path in paths:  # put all the files' directories with their names inside the list "objects_dir"
@@ -124,9 +106,11 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
                     dest = new_path + f"\\\\{marks_of_items[c]}"
                     shutil.copy(i, dest)
 
+                new_path_entry.delete(0, END)
                 messagebox.showinfo("Congratulations", done_message + new_path)
             except:
                 messagebox.showerror("What was that !!!", error_message)
+                new_path_entry.delete(0, END)
 
         elif combo_text.get() == "Sort by their types (extensions)":  # enter if it's a type sorting
             try:
@@ -156,14 +140,18 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
                     dest = new_path + f"\\\\{marks_of_items[c]}"
                     shutil.copy(i, dest)
 
+                new_path_entry.delete(0, END)
                 messagebox.showinfo("Congratulations", done_message + new_path)
             except:
                 messagebox.showerror("What was that !!!", error_message)
+                new_path_entry.delete(0, END)
         else:
             messagebox.showerror("What was that !!!", error_message)
+            new_path_entry.delete(0, END)
 
     except:
         messagebox.showerror("Something went wrong !!", "Something went wrong !!")
+        new_path_entry.delete(0, END)
 
 
 def browse(master, browse_entry, listbox):  # response to clicking the "Browse" button (opens a dialog box to select a file from disk)
@@ -178,6 +166,7 @@ def browse(master, browse_entry, listbox):  # response to clicking the "Browse" 
                 add_item(item, listbox, browse_entry)  # add files to the list
     except:
         messagebox.showerror("Something went wrong !!", "Something went wrong !!")
+        browse_entry.delete(0, END)
 
 
 def add_item(item, listbox, entry):  # response to clicking the "Add" button in the first sub window inside the
@@ -287,15 +276,17 @@ def rename(entry, entry_text, listbox):  # response to the rename button
         new_dir = f"{os.path.dirname(item)}{entry_text}{exe}"  # make the new path and name
         try:
             os.rename(item, new_dir)  # rename the item
-            messagebox.showinfo("All done boss ;)", "Files have been renamed successfully !!")
+            messagebox.showinfo("All done boss ;)", "File has been renamed successfully !!")
             listbox.delete(ANCHOR)  # clear the field
             entry.delete(0, END)
         except:
             messagebox.showerror("Really -_-", "You did not select any item to rename or the file you are trying to "
                                                "rename may not exist.")
+            entry.delete(0, END)
     except:
         messagebox.showerror("Something went wrong !", "You did not select any item to rename or the file you are "
                                                        "trying to rename may not exist.")
+        entry.delete(0, END)
 
 
 def quickRename(listbox, checkButtonVar):  # response to clicking the "Quick rename" button
@@ -362,19 +353,14 @@ def select_all_Fun(var, checkButton):  # change the background color of the chec
         checkButton.config(bg="green")
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# workspace (the working window inside a function)
-def workspaceFun():
-    workspace = Toplevel(bg=lightBlue)
-    workspace.title("The Puppet Master")
-    workspace.geometry("1300x650+40+20")
-    workspace.resizable(0, 0)
-    x_point, y_point = 480, 25
-    try:
-        workspace.iconbitmap("logo270.ico")
-    except:
-        pass
-    Label(workspace, text="How to use it ?", bg=Blue, font=topic_font).place(x=20, y=20)
+def how_to_use_it():
+    how_to = Toplevel(bg=lightBlue)
+    how_to.title("How to use the app")
+    how_to.geometry("600x520+340+80")
+    how_to.resizable(0, 0)
+
+    Label(how_to, text="How to use the app ?", bg=Blue, font=topic_font, padx=10, pady=10
+          ).pack(side=TOP, fill=X, padx=10, pady=10)
     description = "You can sort and rename hundreds of files within few seconds.\n" \
                   "- Select files as much as you want from the adding window by browsing your disk from the first" \
                   " sub window. Or typing a path in the second one to add multiple files at once.\n" \
@@ -390,14 +376,81 @@ def workspaceFun():
                   "as a sequence of numbers. Unless you want to \"Select all\" the paths and rename all the files " \
                   "inside each one of them."
 
-    Label(workspace, text=description, bg=Blue, justify="left", wraplength=420, font=text_font, width=43).place(x=20, y=50)
-    Button(workspace, text="Back", command=lambda: controller("mainWin", workspace), bg=Yellow,
-           font=("Cooper Black", 20, "italic"), activebackground=darkBlue, activeforeground=Yellow).place(x=20, y=585)
+    Label(how_to, text=description, bg=Blue, justify="left", wraplength=540, font=text_font, padx=10, pady=10
+          ).pack(side=BOTTOM, fill=X, padx=10, pady=10)
 
-    Label(workspace, text="What is \nthe \"PATH\" ?", bg=lightBlue, font=("Cooper Black", 14, "italic")).place(x=240, y=585)
 
-    Button(workspace, bitmap="info", command=lambda: path_info(workspace), bg=Yellow, width=20, activebackground=darkBlue,
-           activeforeground=Yellow, cursor="hand2").place(x=385, y=600)
+def path_info():  # provide info about the meaning of the phrase "path" in case the user didn't know
+    info = Toplevel(bg=Blue)
+    info.title("What is the path ?")
+    info.geometry("620x500+360+80")
+    info.resizable(0, 0)
+    Label(info, bg=lightBlue, font=text_font, text="The path is the sequence of folders that reaches a specific place "
+                                                   "in the device").place(x=20, y=20)
+    try:  # using "try" statement so if the logo files are not exist, the code doesn't crash
+        Label(info, image=path1).place(x=20, y=50)
+    except:
+        Label(info, text="Picture is lost", font=text_font).place(x=100, y=100)
+    Label(info, bg=lightBlue, font=text_font, text="Click this path and copy it ").place(x=20, y=240)
+    try:
+        Label(info, image=path2).place(x=20, y=270)
+    except:
+        Label(info, text="Picture is lost", font=text_font).place(x=100, y=320)
+    Label(info, bg=lightBlue, font=text_font, text="Now just paste it in the field ").place(x=20, y=460)
+
+
+def contact_me():
+    contact = Toplevel(bg=lightBlue)
+    contact.title("Contact me")
+    contact.geometry("600x320+340+80")
+    contact.resizable(0, 0)
+
+    Label(contact, text="--- ENG. Mustfa Ayyed Alhasanat ---", bg=Blue, font=("Cooper Black", 20, "bold")
+          , padx=20, pady=20).pack(side=TOP, fill=X, padx=20, pady=20)
+
+    contents = Text(contact, width=50, bg=Blue, padx=20, pady=20, font=text_font)
+    contents.pack(side=TOP, fill=X, padx=20, pady=20)
+    txt = "e-mail >> mustfaaayyed@gmail.com\n" \
+          "phone number >> +962 7 80387522\n" \
+          "university >> TTU (Tafila Technical University)\n" \
+          "specialty >> Communications and Electronics Engineering"
+    contents.insert(INSERT, txt)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# workspace (the working window inside a function)
+def workspaceFun():
+    workspace = Toplevel(bg=lightBlue)
+    workspace.title("The Puppet Master")
+    workspace.geometry("812x650+260+20")
+    workspace.resizable(0, 0)
+    x_point, y_point = 15, 5
+
+    try:
+        workspace.iconbitmap("logo270.ico")
+    except:
+        pass
+
+    # define the menu and the submenus
+    mainMenu = Menu(workspace)
+    fileMenu = Menu(mainMenu, bg=darkBlue, fg="#FFFFFF", font=("times", 13, "bold"))
+    mainMenu.add_cascade(label="File", menu=fileMenu)
+    fileMenu.add_command(label="Exit", command=workspace.quit)
+    helpMenu = Menu(mainMenu, bg=darkBlue, fg="#FFFFFF", font=("times", 13, "bold"))
+    mainMenu.add_cascade(label="Help", menu=helpMenu)
+    helpMenu.add_command(label="How to use it ?", command=how_to_use_it)
+    helpMenu.add_command(label="What is the \"PATH\" ?", command=path_info)
+    helpMenu.add_command(label="Contact me", command=contact_me)
+    workspace.config(menu=mainMenu)
+
+    Button(workspace, text="Back", command=lambda: controller("mainWin", workspace), bg=Yellow, cursor="hand2",
+           font=("Cooper Black", 20, "italic"), activebackground=darkBlue, activeforeground=Yellow).place(x=x_point+5, y=y_point+550)
+
+    Label(workspace, text="CLick on the \"Help\" menu to learn how to use the app.", bg=Blue, fg="red", padx=7, pady=7,
+          font=("Cooper Black", 14, "italic"), width=12, wraplength=150).place(x=x_point+120, y=y_point+500)
+
+    Label(workspace, width=111, height=7, bg=Yellow).place(x=x_point, y=y_point+263)
+    Label(workspace, width=111, height=5, bg=Yellow).place(x=x_point, y=y_point+385)
 
     # Notebook ---------------------------------------------------------------------------------------------------------
     Label(workspace, text="Add items and paths", bg=lightBlue, font=text_font).place(x=x_point, y=y_point)
@@ -467,7 +520,7 @@ def workspaceFun():
     Label(workspace, text="Added items", bg=lightBlue, font=text_font).place(x=x_point + 300, y=y_point)
 
     objects = PanedWindow(workspace)
-    objects.place(x=x_point + 300, y=60)
+    objects.place(x=x_point + 300, y=y_point + 35)
 
     objects_scrollbarY = Scrollbar(objects)
     objects_scrollbarY.pack(side=RIGHT, fill=Y)
@@ -484,10 +537,10 @@ def workspaceFun():
     brose_button.config(command=lambda: browse(mainWin, filename_entry, objects_listbox))
 
     # Added paths listbox ----------------------------------------------------------------------------------------------
-    Label(workspace, text="Added paths", bg=lightBlue, font=text_font).place(x=x_point + 550, y=25)
+    Label(workspace, text="Added paths", bg=lightBlue, font=text_font).place(x=x_point + 550, y=y_point)
 
     paths = PanedWindow(workspace)
-    paths.place(x=x_point + 550, y=60)
+    paths.place(x=x_point + 550, y=y_point + 35)
 
     paths_scrollbarY = Scrollbar(paths)
     paths_scrollbarY.pack(side=RIGHT, fill=Y)
@@ -506,9 +559,9 @@ def workspaceFun():
 
     Label(workspace, text="Enter the path where you want to save the new files then \nchoose the type of sorting "
                           "(by extensions or by names) \n(Only if you want to resort them in a new folder)",
-          font=text_font, bg=lightBlue).place(x=x_point, y=y_point + 270)
+          font=text_font, bg=Yellow).place(x=x_point, y=y_point + 270)
 
-    new_path_field = Entry(workspace, textvariable=new_path, width=18, bg=Yellow, fg=darkBlue, insertbackground=darkBlue,
+    new_path_field = Entry(workspace, textvariable=new_path, width=18, bg=darkBlue, fg=Yellow, insertbackground=Blue,
           font=("Consolas", 15, "bold"))
     new_path_field.place(x=x_point + 460, y=y_point + 275)
 
@@ -516,39 +569,39 @@ def workspaceFun():
     combo_values = ("Sort by their names (alphabetically)", "Sort by their types (extensions)")
     ttk.Combobox(workspace, textvariable=combo_text, values=combo_values, width=30).place(x=x_point + 460, y=y_point + 310)
 
-    Label(workspace, text="Explain to me what\n will happen", bg=lightBlue, font=text_font).place(x=x_point + 460, y=y_point + 340)
+    Label(workspace, text="Explain to me what will happen", bg=Yellow, font=text_font).place(x=x_point + 450, y=y_point + 340)
 
-    Button(workspace, activebackground=darkBlue, bitmap="info", width=20, activeforeground=Yellow, bg=Yellow,
-            command=lambda: combo_check(combo_text), font=text_font, cursor="hand2").place(x=x_point + 620, y=y_point + 350)
+    Button(workspace, activebackground=Yellow, bitmap="info", width=20, activeforeground=darkBlue, bg=darkBlue, fg=Yellow,
+            command=lambda: combo_check(combo_text), font=text_font, cursor="hand2").place(x=x_point + 705, y=y_point + 340)
 
-    Button(workspace, text="Sort", command=lambda: sort(objects_listbox, paths_listbox, new_path_field, combo_text), bg=Yellow,
-           font=("Cooper Black", 20), bd=4, relief=GROOVE, activebackground=darkBlue, cursor="hand2", fg=darkBlue,
-           activeforeground=Yellow).place(x=x_point + 680, y=y_point + 275)
+    Button(workspace, text="Sort", command=lambda: sort(objects_listbox, paths_listbox, new_path_field, combo_text), bg=darkBlue,
+           font=("Cooper Black", 20), bd=4, relief=GROOVE, activebackground=Yellow, cursor="hand2", fg=Yellow,
+           activeforeground=darkBlue).place(x=x_point + 680, y=y_point + 275)
 
-    Label(workspace, text="Enter the new name of the selected file here :", font=text_font, bg=lightBlue).place(x=x_point, y=y_point + 410)
+    Label(workspace, text="Enter the new name of the selected file here :", font=text_font, bg=Yellow).place(x=x_point, y=y_point + 410)
 
-    new_name_field = Entry(workspace, textvariable=new_name, width=22, bg=darkBlue, fg=Yellow, insertbackground=darkBlue, font=("Consolas", 15, "bold"))
-    new_name_field.place(x=x_point + 370, y=y_point + 422)
+    new_name_field = Entry(workspace, textvariable=new_name, width=22, bg=darkBlue, fg=Yellow, insertbackground=Blue, font=("Consolas", 15, "bold"))
+    new_name_field.place(x=x_point + 370, y=y_point + 412)
 
     Button(workspace, text="Rename", bg=darkBlue, font=("Cooper Black", 18), bd=4, relief=GROOVE, fg=Yellow,
            activebackground=Yellow, cursor="hand2", activeforeground=darkBlue,
-           command=lambda: rename(new_name_field, entryGet(new_name_field), objects_listbox)).place(x=x_point + 640, y=y_point + 410)
+           command=lambda: rename(new_name_field, entryGet(new_name_field), objects_listbox)).place(x=x_point + 640, y=y_point + 400)
 
     # label frame ------------------------------------------------------------------------------------------------------
     quick_rename = LabelFrame(workspace, text="Quick Rename", bg=Blue, font=("Cooper Black", 15))
-    quick_rename.place(x=x_point, y=y_point + 480)
+    quick_rename.place(x=x_point+312, y=y_point + 485)
 
     Label(quick_rename, text="Select a path from the paths box then click on the button (or you can check \"Select all\")",
-          font=text_font, bg=Blue, width=75).pack(side=TOP, fill=X, padx=10, pady=5)
+          font=text_font, bg=Blue, width=25, justify="left", wraplength=230).pack(side=LEFT, fill=Y, padx=10, pady=3)
 
     select_all_var = IntVar()
-    select_all = Checkbutton(quick_rename, text="Select all", font=text_font, bg="red",
+    select_all = Checkbutton(quick_rename, text="Select all", font=text_font, bg="red", cursor="hand2",
                              variable=select_all_var, command=lambda: select_all_Fun(select_all_var, select_all))
-    select_all.pack(side=LEFT, padx=10, pady=10)
+    select_all.pack(side=BOTTOM, anchor="ne", padx=5, pady=5)
 
     Button(quick_rename, text="Quick Rename", bg=Yellow, font=("Cooper Black", 15), bd=4, relief=GROOVE, fg=darkBlue,
-           activebackground=Yellow, cursor="hand2", activeforeground=darkBlue,
-               command=lambda: quickRename(paths_listbox, select_all_var)).pack(side=RIGHT, padx=10, pady=10)
+           activebackground=darkBlue, cursor="hand2", activeforeground=Yellow,
+               command=lambda: quickRename(paths_listbox, select_all_var)).pack(side=TOP, anchor="se", padx=5, pady=5)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -568,22 +621,13 @@ lightBlue, Blue, darkBlue, Yellow = "#a2d5f2", "#40a8c4", "#07689f", "#ffc93c"
 topic_font, text_font = ("Cooper Black", 17, "underline"), ("Andalus", 12, "bold")
 logo_list = ["logo270.png", "1.png", "2.png"]
 
+mainWin.config(bg=lightBlue)
+
 #  putting the logo defining code in a try-statement so the code wont crash if the logos have lost
 try:
     mainLogo, path1, path2 = PhotoImage(file=logo_list[0]), PhotoImage(file=logo_list[1]), PhotoImage(file=logo_list[2 ])
 except:
     messagebox.showwarning("Where are the logos ???", "We can't find some of the logos in the project's folder !!!")
-
-mainWin.config(bg=lightBlue)
-mainMenu = Menu(mainWin)
-fileMenu = Menu(mainMenu, bg=darkBlue, fg="#FFFFFF", font=("times", 13, "bold"))
-mainMenu.add_cascade(label="File", menu=fileMenu)
-fileMenu.add_command(label="Exit", command=mainWin.quit)
-helpMenu = Menu(mainMenu, bg=darkBlue, fg="#FFFFFF", font=("times", 13, "bold"))
-mainMenu.add_cascade(label="Help", menu=helpMenu)
-helpMenu.add_command(label="How to use it ?")
-helpMenu.add_command(label="Contact me")
-mainWin.config(menu=mainMenu)
 
 the_puppet_master_paned = PanedWindow(mainWin, bg=lightBlue)
 the_puppet_master_paned.place(x=20, y=20)
@@ -597,7 +641,7 @@ except:
 
 Button(the_puppet_master_paned, text="Start", bg=Yellow, font=("Cooper Black", 20, "italic"), pady=5, cursor="hand2",
        activebackground=darkBlue, activeforeground=Yellow,
-       command=lambda: controller("workspace", mainMenu)).pack(side=BOTTOM, pady=5)
+       command=lambda: controller("workspace", mainWin)).pack(side=BOTTOM, pady=5)
 
 Label(the_puppet_master_paned, text="Manipulate files easily", font=("Andalus", 25, "bold"), bg=lightBlue,
       padx=5, pady=5).pack(side=BOTTOM, fill=X)
