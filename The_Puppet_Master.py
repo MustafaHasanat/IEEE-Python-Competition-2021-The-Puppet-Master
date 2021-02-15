@@ -42,6 +42,7 @@ def combo_check(combo_text):  # check the user's selection of the combobox besid
 
 # response to the click on the "Sort" button by applying the selected orders
 def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
+
     try:
         if not obj_listbox.get(0, END) and not paths_listbox.get(0, END) and not new_path_entry.get():
             messagebox.showerror("Where are they ??", "At least one of the two boxes, and the new-path field mustn't be "
@@ -54,8 +55,11 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
                         "path. Please delete it and try again "
         done_message = "Congrats ... Mission has accomplished !!!\nYou can find your ORGANIZED files here :\n"
 
+        # get all the items from the two boxes
         objects_dir, paths = list(obj_listbox.get(0, END)), list(paths_listbox.get(0, END))
         new_path = new_path_entry.get().replace("\\", "\\\\")
+
+        items = []  # a list that will have all names of the files
 
         if not os.path.isdir(new_path):  # assure that the given path is valid
             messagebox.showerror("What was that ??", "Invalid path in the new-path field")
@@ -65,12 +69,13 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
         for path in paths:  # put all the files' directories with their names inside the list "objects_dir"
             os.chdir(path)
             dirs = os.listdir(path)
-            for directory in dirs:
-                objects_dir.append(f"{path}\\{directory}")
+            for file in dirs:
+                if (os.path.isdir(file)) or (file == "desktop.ini"):
+                    continue
+                objects_dir.append(f"{path}\\{file}")
 
-        items = []  # a list that will have all the names of the files
         for item in objects_dir:
-            items.append(item[len(os.path.dirname(item)) + 1:])
+            items.append(item[len(os.path.dirname(item)) + 1:])  # add the names of the files
 
         # using "if" statement to check the selected choice inside the combo box that specifies the sorting type
         if combo_text.get() == "Sort by their names (alphabetically)":  # enter if it's an alphabetic sorting
@@ -196,6 +201,7 @@ def add_item(item, listbox, entry):  # response to clicking the "Add" button in 
 
     except:
         messagebox.showerror("Something went wrong !!", "Something went wrong !!")
+        entry.delete(0, END)  # clear the field
 
 
 def add_list(path, listbox, entry, type_of_input):  # response to clicking the "add" button from the second and third sub window
@@ -237,7 +243,7 @@ def add_list(path, listbox, entry, type_of_input):  # response to clicking the "
             if f"{path}\\{item}" in listbox.get(0, END):  # reject the existed items
                 duplicate = True
                 continue
-            if (os.path.isdir(item)) or (item == f"{path}\\desktop.ini"):
+            if (os.path.isdir(item)) or (item == "desktop.ini"):  # reject folders
                 continue
             listbox.insert(END, f"{path}\\{item}")
 
@@ -251,6 +257,7 @@ def add_list(path, listbox, entry, type_of_input):  # response to clicking the "
 
     except:
         messagebox.showerror("Something went wrong !!", "Something went wrong !!")
+        entry.delete(0, END)  # clear the field
 
 
 def entryGet(entry):  # return the text written inside the given Entry
@@ -265,7 +272,6 @@ def delete(listbox, DEL):  # delete the selected item from the box, or delete th
             messagebox.showerror("Really -_-", "No item has been selected.")
     else:
         if not listbox.get(0, END):
-            listbox.delete(0, END)
             messagebox.showerror("Really -_-", "There are no items in the field.")
 
 
