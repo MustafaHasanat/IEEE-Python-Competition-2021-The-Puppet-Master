@@ -220,8 +220,9 @@ def rename(entry, entry_text, listbox):  # response to the rename button
             listbox.delete(ANCHOR)  # clear the field
             entry.delete(0, END)
         except:
-            messagebox.showerror("Really -_-", "You did not select any item to rename or the file you are trying to "
-                                               "rename may not exist.")
+            messagebox.showerror("Really -_-", "You did not select any item to rename.\nOr the file you are trying to "
+                                               "rename may not exist.\nOr the new name is invalid because it might "
+                                               "have some special characters, like:\n             / \\ : * ? \" < > |")
             entry.delete(0, END)
     except:
         messagebox.showerror("Something went wrong !", "You did not select any item to rename or the file you are "
@@ -233,9 +234,8 @@ def browse(master, browse_entry, listbox):  # response to clicking the "Browse" 
     try:
         browse_entry.delete(0, END)  # clear the entry's text
         master.filenames = filedialog.askopenfilenames(initialdir=r"C:", title="Select a file", filetypes=(("All", "*.*"), ("png file", "*png")))
-        
         if len(master.filenames) == 1:  # if the user had selected only one file
-            browse_entry.insert(0, master.filenames)  # insert the file inside the entry
+            browse_entry.insert(0, master.filenames[0])  # insert the file inside the entry
         elif len(master.filenames) > 1:  # if the user had selected more than one file
             for item in master.filenames:
                 add_item(item, listbox, browse_entry)  # add files to the list
