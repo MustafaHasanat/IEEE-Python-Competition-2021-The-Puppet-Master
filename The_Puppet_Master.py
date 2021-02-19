@@ -234,9 +234,9 @@ def browse(master, browse_entry, listbox):  # response to clicking the "Browse" 
         browse_entry.delete(0, END)  # clear the entry's text
         master.filenames = filedialog.askopenfilenames(initialdir=r"C:", title="Select a file",
                                                        filetypes=(("All", "*.*"), ("png file", "*png")))
-        if len(master.filenames) == 1:
+                if len(master.filenames) == 1:  # if the user had selected only one file
             browse_entry.insert(0, master.filenames)  # insert the file inside the entry
-        elif len(master.filenames) > 1:
+        elif len(master.filenames) > 1:  # if the user had selected more than one file
             for item in master.filenames:
                 add_item(item, listbox, browse_entry)  # add files to the list
     except:
