@@ -232,9 +232,9 @@ def rename(entry, entry_text, listbox):  # response to the rename button
 def browse(master, browse_entry, listbox):  # response to clicking the "Browse" button (opens a dialog box to select a file from disk)
     try:
         browse_entry.delete(0, END)  # clear the entry's text
-        master.filenames = filedialog.askopenfilenames(initialdir=r"C:", title="Select a file",
-                                                       filetypes=(("All", "*.*"), ("png file", "*png")))
-                if len(master.filenames) == 1:  # if the user had selected only one file
+        master.filenames = filedialog.askopenfilenames(initialdir=r"C:", title="Select a file", filetypes=(("All", "*.*"), ("png file", "*png")))
+        
+        if len(master.filenames) == 1:  # if the user had selected only one file
             browse_entry.insert(0, master.filenames)  # insert the file inside the entry
         elif len(master.filenames) > 1:  # if the user had selected more than one file
             for item in master.filenames:
