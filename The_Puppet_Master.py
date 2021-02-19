@@ -212,7 +212,7 @@ def sort(obj_listbox, paths_listbox, new_path_entry, combo_text):
 def rename(entry, entry_text, listbox):  # response to the rename button
     try:
         item = listbox.get(ANCHOR)  # get the selected item
-        name, exe = os.path.splitext(item[len(os.path.dirname(item)) + 1:])  # get the name and the extension of the item
+        name, exe = os.path.splitext(item[len(os.path.dirname(item)):])  # get the name and the extension of the item
         new_dir = f"{os.path.dirname(item)}{entry_text}{exe}"  # make the new path and name
         try:
             os.rename(item, new_dir)  # rename the item
