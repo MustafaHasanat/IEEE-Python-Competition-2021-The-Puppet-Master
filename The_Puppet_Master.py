@@ -4,6 +4,8 @@
 #                                                                                                                     |
 # The main function of the application is to gather many files from many directories and edit them by either sorting  |
 # them in a new folder or rename them fastly.                                                                         |
+#                                                                                                                     |
+# NOTE: <<< this program does not support Arabic texts >>>                                                            |
 # ---------------------------------------------------------------------------------------------------------------------
 
 from tkinter import *
@@ -30,7 +32,7 @@ def controller(window_name, master):  # controls the visibility of each window t
 def how_to_use_it():  # display the contact window
     how_to = Toplevel(bg=lightBlue)
     how_to.title("How to use the app")
-    how_to.geometry("600x520+340+80")
+    how_to.geometry("600x580+340+80")
     how_to.resizable(0, 0)
 
     Label(how_to, text="How to use the app ?", bg=Blue, font=topic_font, padx=10, pady=10
@@ -48,7 +50,10 @@ def how_to_use_it():  # display the contact window
                   " \"Rename\".\n" \
                   "- \"Quick Rename\" button will rename all files inside the selected path from the paths list " \
                   "as a sequence of numbers. Unless you want to \"Select all\" the paths and rename all the files " \
-                  "inside each one of them."
+                  "inside each one of them.\n\n" \
+                  "--------------------------------------------------\n" \
+                  "NOTE: this program does not support Arabic texts.\n" \
+                  "--------------------------------------------------"
 
     Label(how_to, text=description, bg=Blue, justify="left", wraplength=540, font=text_font, padx=10, pady=10
           ).pack(side=BOTTOM, fill=X, padx=10, pady=10)
@@ -332,13 +337,15 @@ def add_list(path, listbox, entry, type_of_input):  # response to clicking the "
 
 def delete(listbox, DEL):  # delete the selected item from the box, or delete them all if (DEL=True)
     if not DEL:
-        if listbox.get(ANCHOR) != "":
-            listbox.delete(ANCHOR)
-        else:
+        if not listbox.get(ANCHOR):
             messagebox.showerror("Really -_-", "No item has been selected.")
+        else:
+            listbox.delete(ANCHOR)
     else:
         if not listbox.get(0, END):
             messagebox.showerror("Really -_-", "There are no items in the field.")
+        else:
+            listbox.delete(0, END)
 
 
 def entryGet(entry):  # return the text written inside the given Entry
